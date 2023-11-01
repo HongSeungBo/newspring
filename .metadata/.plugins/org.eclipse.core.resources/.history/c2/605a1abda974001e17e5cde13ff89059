@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-config.dtd">
+  <configuration>
+  	<settings>
+  		<setting name="mapUnderscoreToCamelCase" value="true" />
+  	</settings>
+  	<typeAliases>
+  		<typeAlias type="com.myweb.www.domain.BoardVO" alias="bvo" />
+  		<typeAlias type="com.myweb.www.domain.PagingVO" alias="pgvo" />
+  		<typeAlias type="com.myweb.www.domain.CommentVO" alias="cvo" />
+  		<typeAlias type="com.myweb.www.domain.FileVO" alias="fvo" />
+  		<typeAlias type="com.myseb.www.security.FileVO" alias="fvo" />
+  	</typeAliases>
+  </configuration>

@@ -1,0 +1,5 @@
+package com.myseb.www.security;
+
+public class AuthVO {
+
+}

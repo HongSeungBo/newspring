@@ -1,0 +1,112 @@
+package com.myweb.www.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.myweb.www.domain.BoardDTO;
+import com.myweb.www.domain.BoardVO;
+import com.myweb.www.domain.FileVO;
+import com.myweb.www.domain.PagingVO;
+import com.myweb.www.repository.BoardDAO;
+import com.myweb.www.repository.CommentDAO;
+import com.myweb.www.repository.FileDAO;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class BoardServiceImpl implements BoardService{
+	@Inject
+	private BoardDAO bdao;
+	
+	@Inject
+	private CommentDAO cdao;
+	
+	@Inject
+	private FileDAO fdao;
+
+//	@Override
+//	public int insert(BoardVO bvo) {
+//		return bdao.insert(bvo);
+//	}
+	@Transactional
+	@Override
+	public List<BoardVO> getList(PagingVO pgvo) {
+		bdao.updateCmtQty();
+		bdao.updatehasFile();
+		return bdao.getList(pgvo);
+	}
+
+	@Override
+	public BoardDTO detail(long bno) {
+		bdao.readupdate(bno);
+		BoardDTO bdto = new BoardDTO();
+		bdto.setBvo(bdao.selectOne(bno));
+		bdto.setFlist(fdao.getFile(bno));
+		return bdto;
+	}
+	
+	@Transactional
+	@Override
+	public int modify(BoardDTO bdto) {
+		int isUp = bdao.update(bdto.getBvo());
+		if(isUp>0 && bdto.getFlist().size()>0) {
+			for(FileVO fvo : bdto.getFlist()) {
+				fvo.setBno(bdto.getBvo().getBno());
+				isUp*=fdao.insertFile(fvo);
+			}
+			int getCount = fdao.getCount(bdto.getBvo().getBno());
+			bdao.updateFileCount(getCount, bdto.getBvo().getBno());
+		}
+		return isUp;
+	}
+	@Transactional
+	@Override
+	public int remove(long bno) {
+		cdao.deleteAll(bno);
+		fdao.deleteAll(bno);
+		return bdao.remove(bno);
+	}
+
+	@Override
+	public int getTotalCount(PagingVO pgvo) {
+		return bdao.getTotalCount(pgvo);
+	}
+
+	@Override
+	public int insert(BoardDTO BoardDTO) {
+		// bvo, flist 가져와서 각자 db에 저장
+		int isUp = bdao.insert(BoardDTO.getBvo()); // bno등록
+		// 글 등록 성공하고 첨부파일의 크기가 0보다 크다면
+		if(isUp > 0 && BoardDTO.getFlist().size()>0){
+			long bno = bdao.selectOneBno();
+			//모든 파일에 bno set
+			for(FileVO fvo : BoardDTO.getFlist()) {
+				fvo.setBno(bno);
+				isUp*=fdao.insertFile(fvo);
+			}
+			
+			int getCount = fdao.getCount(bno);
+			bdao.updateFileCount(getCount, bno);
+		}
+		return isUp;
+	}
+
+	@Override
+	public int modiFile(String uuid, long bno) {
+		return fdao.modiFile(uuid, bno);
+	}
+
+	@Override
+	public int deleteFile(FileVO fvo) {
+		int isOk = fdao.deleteFile(fvo);
+		int getCount = fdao.getCount(fvo.getBno());
+		bdao.updateFileCount(getCount, fvo.getBno());
+		return isOk;
+	}
+
+}

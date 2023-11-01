@@ -1,0 +1,33 @@
+package com.myweb.www.repository;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.myweb.www.domain.BoardDTO;
+import com.myweb.www.domain.BoardVO;
+import com.myweb.www.domain.PagingVO;
+
+public interface BoardDAO {
+
+	int insert(BoardVO bvo);
+
+	List<BoardVO> getList(PagingVO pgvo);
+
+	BoardVO selectOne(long bno);
+
+	void readupdate(long bno);
+
+	int update(BoardVO bvo);
+
+	int remove(long bno);
+
+	int getTotalCount(PagingVO pgvo);
+
+	long selectOneBno();
+
+	void updateFileCount(@Param("getCount")int getCount,@Param("bno")long bno);
+
+	void cmtCntUp(@Param("cmtCount)"int cmtCount, long bno);
+
+}

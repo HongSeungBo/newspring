@@ -1,0 +1,7 @@
+package com.myseb.www.security;
+
+import org.springframework.security.core.userdetails.User;
+
+public class AuthMember extends User{
+	
+}

@@ -1,0 +1,42 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Register Page</title>
+</head>
+<body>
+<jsp:include page="../common/header.jsp" />
+<jsp:include page="../common/nav.jsp" />
+<sec:authentication property="principal.mvo.email" var="authEmail"/>
+<form action="/board/register" method="post" enctype="multipart/form-data">
+	<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label">제목</label>
+  <input type="text" class="form-control" id="exampleFormControlInput1" name="title" placeholder="제목">
+</div>
+	<div class="mb-3">
+  <label for="exampleFormControlInput1" class="form-label">작성자</label>
+  <input type="text" class="form-control" id="exampleFormControlInput1" name="writer" value="${authEmail }" readonly="readonly">
+</div>
+<div class="mb-3">
+  <label for="exampleFormControlTextarea1" class="form-label">내용</label>
+  <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="content" placeholder="내용"></textarea>
+</div>
+<div class="mb-3">
+  <input type="file" class="form-control" id="files" name="files" style="display:none;" multiple="multiple">
+  <!-- input button trigger 용도의 버튼 -->
+  <button type="button" class="btn btn-outline-secondary" id="trigger">파일업로드</button>
+</div>
+<div class="mb-3" id="fileZone">
+	<!-- 첨부파일 표시될 영역 -->
+</div>
+<button type="submit" class="btn btn-dark" id="regBtn">등록</button>
+<a href="/"><button type="button" class="btn btn-light">취소</button></a>
+</form>
+<script type="text/javascript" src="/resources/js/BoardRegister.js"></script>
+<jsp:include page="../common/footer.jsp"></jsp:include>
+</body>
+</html>

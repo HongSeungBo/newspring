@@ -1,0 +1,88 @@
+package com.myweb.www.controller;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.myweb.www.repository.MemberDAO;
+import com.myweb.www.security.MemberVO;
+import com.myweb.www.service.MemberService;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@RequestMapping("/member/**")
+@Controller
+public class MemberController {
+	@Inject
+	private MemberService msv;
+	
+	@Inject
+	private MemberDAO mdao;
+	
+	@Inject
+	private BCryptPasswordEncoder bcEncoder;
+	
+	@GetMapping("/register")
+	public void register() {
+	}
+	
+	@PostMapping("/register")
+	public String register(MemberVO mvo) {
+		mvo.setPwd(bcEncoder.encode(mvo.getPwd()));
+		int isOk = msv.register(mvo);
+		int isOk2 = mdao.insertAuthInit(mvo.getEmail());
+		return "index";
+	}
+	
+	@GetMapping("/login")
+	public void login() {}
+	
+	@PostMapping("/login")
+	public String loginPost(HttpServletRequest req, RedirectAttributes r) {
+		//로그인 실패시 다시 로그인 페이지로 돌아와 오류 메시지 전송
+		//다시 로그인 유도
+		r.addAttribute("email", req.getAttribute("email"));
+		r.addAttribute("errMsg", req.getAttribute("errMsg"));
+		return "redirect:/member/login";
+	}
+	
+	@GetMapping("/list")
+	public String memberList(Model m) {
+		List<MemberVO> list = msv.selectAll();
+		m.addAttribute("list", list);
+		return "/member/list";
+	}
+	
+	@GetMapping("/modify")
+	public String showmodify(Model m, @RequestParam("email")String email) {
+		MemberVO myPage =  msv.selectOne(email);
+		m.addAttribute("my", myPage);
+		return "/member/modify";
+	}
+	
+	@PostMapping("/modify")
+	public String memmodify(MemberVO mvo, Model m) {
+		mvo.setPwd(bcEncoder.encode(mvo.getPwd()));
+		int isOk = msv.modi(mvo);
+		return "index";
+	}
+	
+	@GetMapping("/remove")
+	public String remove(@RequestParam("email")String email) {
+		log.info("remove email >>>> " + email);
+		int isOk = msv.remove(email);
+		log.info("rem isOk >>>>>>>> " + isOk);
+		return "redirect:/member/logout";
+	}
+}

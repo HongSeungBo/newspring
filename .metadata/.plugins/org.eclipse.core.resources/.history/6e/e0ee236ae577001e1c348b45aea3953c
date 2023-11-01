@@ -1,0 +1,117 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+    <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>상세정보</title>
+</head>
+<body>
+<jsp:include page="../common/header.jsp"></jsp:include>
+<jsp:include page="../common/nav.jsp"></jsp:include>
+<table class="table">
+<c:set value="${BoardDTO.bvo }" var="detail"></c:set>
+	<tr>
+		<th>글번호</th>
+		<td>${detail.bno }</td>
+	</tr>
+	<tr>
+		<th>작성자</th>
+		<td>${detail.writer }</td>
+	</tr>
+	<tr>
+		<th>제목</th>
+		<td>${detail.title }</td>
+	</tr>
+	<tr>
+		<th>내용</th>
+		<td>${detail.content }</td>
+	</tr>
+	<tr>
+		<th>조회수</th>
+		<td>${detail.readCount }</td>
+	</tr>
+	<tr>
+		<th>댓글수</th>
+		<td>${detail.cmtQty }</td>
+	</tr>
+</table>
+	<c:set value="${BoardDTO.flist }" var="file"></c:set>
+	<c:forEach items="${file }" var="file">
+	<div>
+		<img src="/upload/${fn:replace(file.saveDir,'\\','/') }/${file.uuid}_th_${file.fileName}" alt="${file.fileName }">
+	</div>
+	</c:forEach>
+<a href="/board/modify?bno=${detail.bno }"><button type="button" class="btn btn-primary">수정</button></a>
+<a href="/board/remove?bno=${detail.bno }"><button type="button" class="btn btn-danger">삭제</button></a>
+<a href="/board/list"><button type="button" class="btn btn-light">리스트로</button></a>
+
+<!-- 댓글 -->
+<div>
+	<!-- 댓글 등록 -->
+	<sec:authorize access="isAuthenticated()">
+	<sec:authentication property="principal.mvo.email" var="authEmail"/>
+		<div class="input-group mb-3">
+			<input type="text" class="input-group-text" id="cmtWriter" value="${authEmail }" readonly="readonly" >
+		  <!-- <span class="input-group-text" id="cmtWriter">Writer</span> -->
+		  <input type="text" class="form-control" placeholder="Comment Text" id="cmtText">
+		  <button type="button" class="btn btn-success" id="cmtPostBtn">Post</button>
+		</div>
+	</sec:authorize>
+	
+	<!-- 댓글 표시 -->
+	<ul class="list-group list-group-flush" id="cmtListArea">
+		<li class="list-group-item" data-cno="${cvo.cno }">
+			<div class="mb-3">
+				<div class="fw-bold" data-writer="${cvo.writer}">Writer</div>
+				Content
+			</div>
+			<span class="badge rounded-pill text-bg-dark">${cvo.regAt}</span>
+			<button type="button" class="btn btn-outline-primary cmtModBtn">수정</button>
+			<button type="button" class="btn btn-outline-danger cmtDelBtn">삭제</button>
+		</li>
+	</ul>
+	<!-- 댓글 페이징 라인 -->
+	<div>
+		<div>
+			<button type="button" id="moreBtn" data-page="1" class="btn btn-outline-dark" style="visibility:hidden">MORE+</button>
+		</div>
+	</div>
+	<!-- 모달창 -->
+		<div class="modal" tabindex="-1" id="myModal">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Writer</h5>
+						<button type="button" class="btn-close"></button>
+					</div>
+					
+					<div class="modal-body">
+						<div class="input-group mb-3">
+							<input type="text" class="form-control" placeholder="Comment Text" id="cmtTextMod">
+	  						<button type="button" class="btn btn-outline-info" id="cmtModBtn">Mod</button>
+						</div>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<script>
+let bnoVal = `<c:out value="${detail.bno}" />`;
+console.log(bnoVal);
+let email = `<c:out value="${sec.authEmail}"`;
+</script>
+<script type="text/javascript" src="/resources/js/BoardComment.js"></script>
+<script type="text/javascript">
+getListFunc(bnoVal);
+</script>
+<jsp:include page="../common/footer.jsp"></jsp:include>
+</body>
+</html>

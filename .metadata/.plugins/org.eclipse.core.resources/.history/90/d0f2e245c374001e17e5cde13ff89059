@@ -1,0 +1,27 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<jsp:include page="../common/header.jsp"></jsp:include>
+<jsp:include page="../common/nav.jsp"></jsp:include>
+<form action="">
+	<table class="table">
+		<div class="mb-3">
+			  <label for="exampleFormControlInput1" class="form-label">이메일</label>
+			  <input type="text" class="form-control" name="email" placeholder="이메일">
+			</div>
+			<div class="mb-3">
+			  <label for="exampleFormControlInput1" class="form-label">비밀번호</label>
+			  <input type="text" class="form-control" name="pwd" placeholder="비밀번호">
+			</div>
+	</table>
+	<button type="submit">로그인</button>
+</form>
+<jsp:include page="../common/footer.jsp"></jsp:include>
+</body>
+</html>

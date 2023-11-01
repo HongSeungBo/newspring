@@ -1,0 +1,50 @@
+package com.myweb.www.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Service;
+
+import com.myweb.www.repository.MemberDAO;
+import com.myweb.www.security.MemberVO;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+@Service
+public class MemberServiceImpl implements MemberService{
+	@Inject
+	private MemberDAO mdao;
+
+	@Override
+	public int register(MemberVO mvo) {
+		return mdao.register(mvo);
+	}
+
+	@Override
+	public boolean updateLastLogin(String authEmail) {
+		return mdao.updateLastLogin(authEmail);
+	}
+
+	@Override
+	public List<MemberVO> selectAll() {
+		return mdao.selectAll();
+	}
+
+	@Override
+	public MemberVO selectOne(String email) {
+		return mdao.selectOne(email);
+	}
+
+	@Override
+	public int modi(MemberVO mvo) {
+		return mdao.modi(mvo);
+	}
+
+	@Override
+	public int remove(String email) {
+		mdao.removeAuth(email);
+		return mdao.remove(email);
+	}
+}

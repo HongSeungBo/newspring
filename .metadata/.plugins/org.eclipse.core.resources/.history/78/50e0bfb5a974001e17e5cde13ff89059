@@ -1,0 +1,8 @@
+package com.myseb.www.security;
+
+public class Snippet {
+	public static void main(String[] args) {
+		com.myseb.www.security
+	}
+}
+
